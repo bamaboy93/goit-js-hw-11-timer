@@ -1,48 +1,35 @@
-const refs = {
-days: document.querySelector('.value[data-value="days"]'),
-hours: document.querySelector('.value[data-value="hours"]'),
-mins: document.querySelector('.value[data-value="mins"]'),
-secs: document.querySelector('.value[data-value="secs"]'),
-timerShell: document.querySelector('.timer'),
-};
+
 
 class CountdownTimer {
-  constructor({ onTick }) {
-    this.selector = '#timer-1';
-    this.targetDate = new Date('Jul 17, 2021');
-    this.onTick = onTick;
+  constructor({selector,targetDate}) {
+    this.targetDate = targetDate;
+    this.selector = selector;
+    this.days = document.querySelector(`${selector} .value[data-value="days"]`);
+    this.hours= document.querySelector(`${selector} .value[data-value="hours"]`);
+    this.minutes = document.querySelector(`${selector} .value[data-value="mins"]`);
+    this.seconds = document.querySelector(`${selector} .value[data-value="secs"]`);
+
   }
-
   intervalId = setInterval(() => {
-    const currentDate = Date.now();
-    const upTime = this.targetDate - currentDate;
-    const time = getTimeComponents(upTime);
-      this.onTick(time);
-  }, 1000);
-
+    const currentTime = Date.now();
+    this.getTimeComponents(currentTime);
+  }, 1000)
+  
+   pad(value) {
+    return String(value).padStart(2, "0");
+  }
+  getTimeComponents(currentTime) {
+    const time = this.targetDate - currentTime;
+    this.days.textContent = this.pad(Math.floor(time / (1000 * 60 * 60 * 24)));
+    this.hours.textContent = this.pad(Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+    this.minutes.textContent = this.pad(Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)));
+    this.seconds.textContent = this.pad(Math.floor((time % (1000 * 60)) / 1000));
+    
+  }
   
 };
+
 new CountdownTimer({
-  onTick: updateClockShell
+  selector: '#timer-1',
+  targetDate: new Date('Jul 17, 2021'),
 });
-function updateClockShell({ days, hours, mins, secs }) {
-    refs.days.textContent = `${days}`;
-    refs.hours.textContent = `${hours}`;
-    refs.mins.textContent = `${mins}`;
-    refs.secs.textContent = `${secs}`;
-    
-    
-}
-function pad(value) {
-    return String(value).padStart(2, "0");
-}
-function getTimeComponents(time) {
-    const days = this.pad(Math.floor(time / (1000 * 60 * 60 * 24)));
-    const hours = this.pad(Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
-    const mins = this.pad(Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)));
-    const secs = this.pad(Math.floor((time % (1000 * 60)) / 1000));
-    return { days, hours, mins, secs };
-}
-
-  
-
